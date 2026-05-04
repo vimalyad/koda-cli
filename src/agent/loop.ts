@@ -12,6 +12,7 @@ export async function runAgent(
   prompt: string,
   config: KodaConfig,
   renderer: Renderer,
+  context = new AgentContext(),
 ): Promise<void> {
   if (!config.apiKey) {
     renderer.error("GEMINI_API_KEY is required.");
@@ -19,10 +20,12 @@ export async function runAgent(
   }
 
   const client = createGeminiClient(config.apiKey);
-  const context = new AgentContext();
-  const initialDirectoryListing = await listDirectoryTool({});
 
-  context.addUserText(`Current directory listing:\n${initialDirectoryListing}`);
+  if (context.isEmpty()) {
+    const initialDirectoryListing = await listDirectoryTool({});
+    context.addUserText(`Current directory listing:\n${initialDirectoryListing}`);
+  }
+
   context.addUserText(prompt);
 
   renderer.info(`Using ${config.model}`);

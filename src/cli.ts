@@ -1,4 +1,7 @@
+import { createInterface } from "node:readline/promises";
+import { stdin as input, stdout as output } from "node:process";
 import { Command } from "commander";
+import { AgentContext } from "./agent/context.js";
 import { runAgent } from "./agent/loop.js";
 import { loadConfig } from "./config.js";
 import { createRenderer } from "./ui/renderer.js";
@@ -32,9 +35,31 @@ export async function runCli(argv = process.argv): Promise<void> {
     .option("--auto-approve", "Skip confirmation prompts for tool actions")
     .option("--dry-run", "Show tool calls without executing writes or commands")
     .option("--model <model>", "Override the Gemini model")
-    .action(async () => {
+    .action(async (options) => {
+      const config = await loadConfig(options);
       const renderer = createRenderer();
-      renderer.info("Interactive chat mode is scaffolded but not implemented yet.");
+      const context = new AgentContext();
+      const readline = createInterface({ input, output });
+
+      renderer.info("koda chat started. Type /exit to quit.");
+
+      try {
+        for (;;) {
+          const prompt = (await readline.question("koda> ")).trim();
+
+          if (prompt.length === 0) {
+            continue;
+          }
+
+          if (prompt === "/exit" || prompt === "/quit") {
+            break;
+          }
+
+          await runAgent(prompt, config, renderer, context);
+        }
+      } finally {
+        readline.close();
+      }
     });
 
   await program.parseAsync(argv);

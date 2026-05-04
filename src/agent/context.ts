@@ -7,6 +7,10 @@ export class AgentContext {
     return this.history;
   }
 
+  isEmpty(): boolean {
+    return this.history.length === 0;
+  }
+
   addUserText(text: string): void {
     this.history.push({ role: "user", parts: [{ text }] });
   }
