@@ -1,4 +1,4 @@
-import type { Content } from "@google/genai";
+import type { Content, FunctionCall, FunctionResponse } from "@google/genai";
 
 export class AgentContext {
   private readonly history: Content[] = [];
@@ -13,5 +13,19 @@ export class AgentContext {
 
   addModelText(text: string): void {
     this.history.push({ role: "model", parts: [{ text }] });
+  }
+
+  addModelFunctionCalls(functionCalls: FunctionCall[]): void {
+    this.history.push({
+      role: "model",
+      parts: functionCalls.map((functionCall) => ({ functionCall })),
+    });
+  }
+
+  addToolResponses(functionResponses: FunctionResponse[]): void {
+    this.history.push({
+      role: "user",
+      parts: functionResponses.map((functionResponse) => ({ functionResponse })),
+    });
   }
 }

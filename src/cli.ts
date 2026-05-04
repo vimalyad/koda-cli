@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { Command } from "commander";
 import { runAgent } from "./agent/loop.js";
 import { loadConfig } from "./config.js";
@@ -40,8 +38,4 @@ export async function runCli(argv = process.argv): Promise<void> {
     });
 
   await program.parseAsync(argv);
-}
-
-if (import.meta.url === `file://${process.argv[1]}`) {
-  await runCli(process.argv);
 }

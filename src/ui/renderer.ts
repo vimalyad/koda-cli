@@ -5,9 +5,12 @@ export interface Renderer {
   debug(message: string): void;
   error(message: string): void;
   info(message: string): void;
+  newline(): void;
   startThinking(): void;
   stopThinking(): void;
+  streamText(text: string): void;
   toolCall(message: string): void;
+  toolResult(message: string): void;
 }
 
 export function createRenderer(): Renderer {
@@ -25,6 +28,9 @@ export function createRenderer(): Renderer {
     info(message: string): void {
       console.log(chalk.white(message));
     },
+    newline(): void {
+      console.log();
+    },
     startThinking(): void {
       spinner = ora("Thinking...").start();
     },
@@ -32,8 +38,14 @@ export function createRenderer(): Renderer {
       spinner?.stop();
       spinner = undefined;
     },
+    streamText(text: string): void {
+      process.stdout.write(chalk.white(text));
+    },
     toolCall(message: string): void {
-      console.log(chalk.cyan(`◆ ${message}`));
+      console.log(chalk.cyan(`> ${message}`));
+    },
+    toolResult(message: string): void {
+      console.log(chalk.dim(message));
     },
   };
 }
