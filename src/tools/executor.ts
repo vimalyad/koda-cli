@@ -1,6 +1,8 @@
 import { listDirectoryTool } from "./list-dir.js";
 import { readFileTool } from "./read-file.js";
+import { runCommandTool } from "./run-command.js";
 import { searchInFilesTool } from "./search.js";
+import { writeFileTool } from "./write-file.js";
 
 export interface ToolExecutionOptions {
   autoApprove: boolean;
@@ -10,7 +12,7 @@ export interface ToolExecutionOptions {
 export async function executeTool(
   name: string,
   args: unknown,
-  _options: ToolExecutionOptions,
+  options: ToolExecutionOptions,
 ): Promise<string> {
   switch (name) {
     case "read_file":
@@ -20,8 +22,9 @@ export async function executeTool(
     case "search_in_files":
       return searchInFilesTool(args);
     case "write_file":
+      return writeFileTool(args, options);
     case "run_command":
-      return `Tool ${name} is registered but not implemented yet. Args: ${JSON.stringify(args)}`;
+      return runCommandTool(args, options);
     default:
       return `Unknown tool: ${name}`;
   }
